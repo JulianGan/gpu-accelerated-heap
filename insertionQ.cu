@@ -84,6 +84,7 @@ __global__ void d_push(float * queue, float item, int max_size){
 }
 
 float pop(float * queue, int max_size){
+    cudaDeviceSynchronize();
     float val = queue[0];
     dim3 gridDim(128);
     dim3 blockDim(250);

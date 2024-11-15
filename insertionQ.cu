@@ -11,7 +11,7 @@ __global__ void d_push(float * queue, float item, int max_size);
 float pop(float * queue, int max_size);
 __global__ void d_pop(float * queue, int max_size, int ofs);
 
-float min(float * old, float val){
+__device__ float min(float * old, float val){
     if (val < *old){
         float temp = *old;
         *old = val;

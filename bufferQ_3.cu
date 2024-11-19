@@ -14,7 +14,7 @@ void push(float * d_queue, float * buffer, float item, int max_size);
 __global__ void find_index(float * d_queue, float item, int * d_ret, int max_size, int ofs);
 __global__ void d_push(float * d_queue, float * buffer, float item, int index, int max_size, int ofs);
 float pop(float * d_queue, float * buffer, int max_size);
-__global__ void d_pop(float * d_queue, float * buffer, float * d_ret, int max_size, int size);
+__global__ void d_pop(float * d_queue, float * buffer, float * d_ret, int max_size, int size, int ofs);
 
 // --- UTILITY FUNCTION ---
 void test_find_index(){
@@ -87,7 +87,7 @@ void run_tests(float * d_queue, float * buffer, int max_size){
         swap(buffer, d_queue);
     }
     print_d_queue(d_queue, max_size);
-    for (int i = 0; i < 4; i++){
+    for (int i = 0; i < 6; i++){
         item = pop(d_queue, buffer, max_size);
         printf("item: %f\n", item);
         swap(buffer, d_queue);
@@ -212,12 +212,15 @@ __global__ void d_push(float * d_queue, float * buffer, float item, int index, i
 
 float pop(float * d_queue, float * buffer, int max_size){
 
-    dim3 gridDim(1);
-    dim3 blockDim(10);
+    dim3 gridDim(32);
+    dim3 blockDim(250);
 
+    int ofs;
     float * d_ret;
     cudaMalloc((void **) &d_ret, sizeof(float));
-    d_pop<<<gridDim, blockDim>>>(d_queue, buffer, d_ret, max_size, size);
+    for (ofs = 0; ofs < max_size; ofs += gridDim.x * blockDim.x){
+        d_pop<<<gridDim, blockDim>>>(d_queue, buffer, d_ret, max_size, size, ofs);
+    }
     --size;
 
     float temp;
@@ -226,18 +229,19 @@ float pop(float * d_queue, float * buffer, int max_size){
     return temp;
 }
 
-__global__ void d_pop(float * d_queue, float * buffer, float * d_ret, int max_size, int size){
+__global__ void d_pop(float * d_queue, float * buffer, float * d_ret, int max_size, int size, int ofs){
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    if (tid + ofs >= max_size) return;
 
-    if (tid == 0){
+    if (tid + ofs == 0){
         *d_ret = d_queue[0];
         return;
     }
 
-    buffer[tid - 1] = d_queue[tid];
+    buffer[tid + ofs - 1] = d_queue[tid + ofs];
 
-    if (tid == size - 1){
-        buffer[tid] = INFINITY;
-        d_queue[tid] = INFINITY;
+    if (tid + ofs == size - 1){
+        buffer[tid + ofs] = INFINITY;
+        d_queue[tid + ofs] = INFINITY;
     }
 }

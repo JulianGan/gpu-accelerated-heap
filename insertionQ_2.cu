@@ -134,6 +134,12 @@ void free_queue(){
     cudaFree(d_queue); cudaFree(buffer);
 }
 
+float peek(){
+    float temp;
+    cudaMemcpy(&temp, &d_queue[0], sizeof(float), cudaMemcpyDeviceToHost);
+    return temp;
+}
+
 void push(float item){
 
     dim3 gridDim(32);

@@ -95,7 +95,7 @@ int main(int argc, char *argv[]){
     ops = atoi(argv[1]);
     ratio = atoi(argv[2]);
     blocks = atoi(argv[4]);
-    threads = atoi(argv[6]);
+    threads = atoi(argv[5]);
 
     init_queue(ops);
 

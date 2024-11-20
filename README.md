@@ -15,7 +15,7 @@ Call:
 ./insertionQ a b c
 
 |    where 'a' is number of operations
-|          'b' is ratio of push operations
+|          'b' is ratio of push operations (should be 50 ~ 100)
 |          'c' is device index (0 or 1 on cims machine)
 
 

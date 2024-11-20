@@ -45,6 +45,7 @@ void run_tests(int ops, int ratio){
 
     int i; // loop index
     clock_t start, stop;
+    cudaDeviceSynchronize();
 
     start = clock();
 
@@ -55,12 +56,12 @@ void run_tests(int ops, int ratio){
     for (i = 0; i < int(ops * (1 - ratio / 100.0)); i++){
         pop();
     }
+    cudaDeviceSynchronize();
+    stop = clock();
     
     #ifdef DEBUG
     print_queue();
     #endif
-
-    stop = clock();
 
     printf("Total time taken = %lf\n", (double)(stop - start) / CLOCKS_PER_SEC);
 

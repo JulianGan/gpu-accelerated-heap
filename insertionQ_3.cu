@@ -50,11 +50,15 @@ void run_tests(int ops, int ratio){
 
     start = clock();
 
-    for (i = 0; i < int(ops * (ratio / 100.0)); i++){
+    for (i = 0; i < int(ops * ((100 - ratio) / 200.0)); i++){
         push( random_float() );
     }
 
-    for (i = 0; i < int(ops * (1 - ratio / 100.0)); i++){
+    for (i = 0; i < int(ops * (ratio / 100.0)); i++){
+        peek();
+    }
+
+    for (i = 0; i < int(ops * ((100 - ratio) / 200.0)); i++){
         pop();
     }
     cudaDeviceSynchronize();
@@ -76,7 +80,7 @@ int main(int argc, char *argv[]){
     if(argc != 6){
 		printf("usage: ./insertionQ <total_operations> <ratio_of_push> <device_number> <blocks> <threads>\n");
 		printf("total_operations = number of push/pop operations to simulate\n");
-        printf("ratio_of_push = percent of operations that are the push operation * 100\n");
+        printf("ratio_of_peek = percent of operations that are the push operation * 100\n");
         printf("device_number = index of device (0 or 1 on cims machine)\n");
         printf("blocks = total number of blocks\n");
         printf("threads = number of threads per block\n");

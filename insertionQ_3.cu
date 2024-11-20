@@ -19,6 +19,7 @@ __global__ void find_index(float * d_queue, float item, int * d_ret, int max_siz
 __global__ void d_push(float * d_queue, float * buffer, float item, int index, int max_size, int ofs);
 float pop();
 __global__ void d_pop(float * d_queue, float * buffer, float * d_ret, int max_size, int size, int ofs);
+float peek();
 
 // --- UTILITY FUNCTION ---
 void swap(float * &a, float * &b){
